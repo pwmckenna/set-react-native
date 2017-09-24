@@ -1,31 +1,56 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Image } from 'react-native';
-import { CardPropTypes } from '../../utils';
-import Styles from './Styles';
+import { Text, View, Image, TouchableWithoutFeedback } from 'react-native';
+import Style from './Style';
+import CardIcons from './CardIcons';
 
-/* eslint global-require: */
 export default class Card extends React.Component {
 
     static propTypes = {
-        number: PropTypes.number.isRequired,
-        width: PropTypes.number.isRequired
+        shape: PropTypes.string.isRequired,
+        color: PropTypes.string.isRequired,
+        fill: PropTypes.string.isRequired,
+        number: PropTypes.string.isRequired
     }
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            selected: false
+        };
+    }
+
+    cardPressed = () => {
+        this.setState({
+            selected: !this.state.selected
+        });
+    }
 
     render() {
-        const cards = [];
+        const imageSource = CardIcons.getImage({
+            color: this.props.color,
+            shape: this.props.shape,
+            fill: this.props.fill
+        });
+        const icons = [];
         for (let i = 0; i < this.props.number; i++) {
-            const card = <Image key={i} style={Styles.getIconStyle(this.props.width)} source={require('../../images/cards/blue_open_moon.png')} />;
-            cards.push(card);
+            const icon = (
+                <Image
+                    key={i}
+                    style={Style.getIconStyle()}
+                    source={imageSource}
+                    onPress={this.cardPressed}
+                />
+            );
+            icons.push(icon);
         }
         return (
-            <View style={Styles.getCardStyle(this.props.width)}>
-                { cards }
-            </View>
+            <TouchableWithoutFeedback onPress={this.cardPressed}>
+                <View style={Style.getCardStyle(this.state.selected)}>
+                    { icons }
+                </View>
+            </TouchableWithoutFeedback>
         );
-        // return (
-        //     <View style={{ height: 100, width: 100, borderWidth: 2 }} />
-        // );
     }
 }
